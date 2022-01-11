@@ -26,7 +26,8 @@ export default {
 
     // 方法
     function sayHello() {
-      console.log(`我叫${name}，今年${age}岁，你好啊~`); 
+      age = 20;
+      console.log(`我叫${name}，今年${age}岁，你好啊~`);  //打印20，但页面还是18
     }
 
     function test2() {
