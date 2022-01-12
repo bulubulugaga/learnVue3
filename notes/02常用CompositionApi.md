@@ -15,3 +15,12 @@
     2. setup不能是一个async函数，因为返回值不再是return的对象，而是promise，模板中看不到return对象中的属性。
 
 # ref函数
+1. 作用：定义一个响应式数据。
+2. 语法：const xxx = ref(initValue)。
+    * 创建一个包含响应式数据的引用对象（reference对象）。
+    * JS中操作数据：xxx.value。
+    * 模板中读取数据：不需要.value，直接 < div >{{ xxx }}< /div >。
+3. 备注：
+    * 接收的数据可以是：基本类型、也可以是对象类型。
+    * 基本类型数据：响应式依然是依靠Object.defineProperty的get和set。
+    * 对象类型的数据：内部“求助”vue3中的新函数----reactive函数。
