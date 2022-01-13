@@ -1,4 +1,4 @@
-> 官网：https://v3.cn.vuejs.org/guide/composition-api-introduction.html   
+> 官网：<a href="https://v3.cn.vuejs.org/guide/composition-api-introduction.html" target="_blank">https://v3.cn.vuejs.org/guide/composition-api-introduction.html</a>   
 
 # 1. 拉开序幕的setup
 1. 理解：vue3中的一个新的配置项，值为一个函数。
@@ -30,3 +30,42 @@
 * 语法：const代理对象 = reactive(源对象)接收一个对象或数组，返回一个代理对象(proxy对象)。
 * reactive定义的响应式数据是“深层次的”。
 * 内部基于ES6的Proxy实现，通过代理对象操作源对象内部数据进行操作。
+
+# 4. 响应式对比
+## vue2中的响应式
+* 实现原理：
+    * 对象类型：通过Object.defineProperty()对属性的读取、修改进行拦截（数据劫持）。
+    * 数组类型：通过重写更新数组的一系列方法来实现拦截。（对数组的变更方法进行了包裹）。
+    ```
+    Object.defineProperty(data, 'count', {
+        get () {},
+        set () {}
+    })
+    ```
+* 存在的问题：
+    * 新增属性、删除属性，界面不会更新。
+    * 直接通过下标修改数组，界面不会自动更新。
+## vue3中的响应式
+* 实现原理：
+    * 通过Proxy（代理）：拦截对象中任意属性值的变化，包括：属性值的读写、属性的添加、属性的删除等。
+    * 通过Reflect（反射）：对被代理对象的属性进行操作。
+    * MDN:
+        * Proxy: <a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy" target="_blank">https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy</a>
+        * Reflect: <a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Reflect" target="_blank">https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Reflect</a>
+
+        ```
+        new Proxy(data, {
+            // 拦截读取属性值
+            get(target, prop) {
+                return Reflect.get(target, prop);
+            },
+            // 拦截设置属性值或添加新属性
+            set(target, prop, value) {
+                return Reflect.set(target, prop, value);
+            },
+            // 拦截删除属性
+            deleteProperty(target, prop) {
+                return Reflect.deleteProperty(target, prop);
+            }
+        });
+        ```

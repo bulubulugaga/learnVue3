@@ -1,0 +1,117 @@
+<!--
+ * @Author: liu
+ * @Date: 2022-01-13 11:18:27
+ * @LastEditTime: 2022-01-13 15:55:05
+ * @Description: file content
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 源数据
+    let person = {
+      name: '张三',
+      age: 18
+    }
+
+    // 模拟vue2实现响应式
+    
+    //#region
+    /*  let p = {}
+    Object.defineProperty(p, 'name', {
+      get() {
+        return person.name;  // 注意这里不能用p.name，否则相当于获取p.name一直进入这里陷入死循环。
+      },
+      set(value) {
+        console.log('name被修改');
+        person.name = value;
+      }
+    }) */
+    //#endregion
+  
+
+    // 模拟vue3实现响应式
+    //#region
+    // const p = new Proxy(person, {});   //能同步修改，不能响应变化
+
+    const p = new Proxy(person, {
+      // 读取p的属性时使用
+      get(target, propName) {
+        console.log(`读取了p身上的${propName}属性`);
+        // return target[propName];
+        return Reflect.get(target, propName);
+      },
+      // 修改或新增p的属性时使用
+      set(target, propName, value) {
+        console.log(`修改了p身上的${propName}属性，更新界面`);
+        // target[propName] = value;
+        Reflect.set(target, propName, value);
+      },
+      // 删除p的属性时使用
+      deleteProperty(target, propName) {
+        console.log(`删除了p身上的${propName}属性，更新界面`);
+        // return delete target[propName];
+        return Reflect.deleteProperty(target, propName);
+      }
+    });
+
+    // 和Object.defineProperty相比较，不用在指明prop属性值，则不用再遍历更新页面
+    //#endregion
+    
+    let obj = {
+      a: 1,
+      b: 2
+    }
+    // Reflect.get(obj, 'a');   // 1
+    // Reflect.set(obj, 'a', 11);   // true   obj.a=11
+    // Reflect.set(obj, 'c', 3);   // true   obj.a=11
+    // Reflect.deleteProperty(obj, 'a');   // true   obj.a=undefined
+
+    // 通过Object.definePropery操作
+    //#region
+    // 不能重复操作同一属性，会报错，在开发中需要用try catch捕获错误
+    /* try{
+      Object.defineProperty(obj, 'c', {
+        get() {
+          return 3
+        }
+      })
+      Object.defineProperty(obj, 'c', {
+        get() {
+          return 4
+        }
+      })
+    } catch(err) {
+      console.log(err);
+    } */
+    //#endregion
+    
+    // 通过Reflect.definePropery操作，目前很多Object上的属性在向Reflect上移植
+    //#region
+    // 不会报错，在开发中更为实用
+    /* const r1 = Reflect.defineProperty(obj, 'c', {
+      get() {
+        return 3
+      }
+    })
+    console.log(r1);
+    const r2 = Reflect.defineProperty(obj, 'c', {
+      get() {
+        return 4
+      }
+    })
+    if(r2) {
+      console.log('成功操作');
+    } else {
+      console.log('失败操作');
+    } */
+    //#endregion
+  </script>
+</body>
+</html>
