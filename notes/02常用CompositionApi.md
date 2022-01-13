@@ -69,3 +69,15 @@
             }
         });
         ```
+
+# 5. reactive对比ref
+* 从定义数据角度对比：
+    * ref用来定义：基本类型数据。
+    * reactive用来定义：对象（数组等）类型数据。
+    * 备注：ref也可以定义对象类型数据，内部会自动通过reactive转为代理对象。
+* 从原理角度对比：
+    * ref通过Object.defineProperty的get和set来实现响应式（数据劫持）。
+    * reactive通过使用Proxy来实现响应式（数据劫持），并通过Reflect操作源对象内部的数据。
+* 从使用角度对比：
+    * ref定义的数据：操作数据需要.value，读取数据时模板中不需要.value。
+    * reactive定义的数据：操作数据与读取数据均不需要.value。
