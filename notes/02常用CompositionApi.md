@@ -92,7 +92,7 @@
         * slots：收到的插槽内容，相当于this.$slots。
         * emit: 分发自定义事件的函数，相当于this.$emit。
 # 7. 计算属性与监听
-1. computed函数
+## 1. computed函数
 * 与vue2中computed配置功能一致
 * 写法
     ```
@@ -115,4 +115,62 @@
             } 
         })
     }  
+    ```
+## 2. watch函数
+* 与vue2中配置功能一致
+* 两个小坑
+    * 监视reactive定义的响应式数据时，oldValue无法正确获取，强制开启了深度监视（deep配置生效）。
+    * 监视reactive定义的响应式数据中的某个属性时，deep配置有效。
+    ```
+    // 情况一：监视ref所定义的一个响应式数据
+    watch(sum, (newVal, oldVal) => {
+      console.log('sum更新了', newVal, oldVal);
+    }, {
+      immediate: true,  // 配置项
+      deep: true
+    })
+
+    // 情况二：监视ref所定义的多个响应式数据
+    watch([sum, msg], (newVal, oldVal) => {
+      console.log('sum或msg更新了', newVal, oldVal);   // newVal为两个更新数据后的数组
+    })
+
+    /* 
+      情况三：监视reactive所定义的一个响应式数据全部属性，
+        1. 注意：此处无法正确的获取oldValue，建议需要oldValue的单独拿出 let age = ref(18) 再监听 
+        2. 注意：强制开启了深度监听（deep配置无效）
+    */
+    watch(person, (newVal, oldVal) => {
+      console.log('person更新了', newVal, oldVal);
+    }, { deep: false }) // 此处deep配置无效
+
+    // 情况四：监听reactive所定义的一个响应式数据中的某个属性，可获取oldVal
+    watch(() => person.age, (newVal, oldVal) => {
+      console.log('person的age更新了', newVal, oldVal);
+    })
+
+    // 情况五：监听reactive所定义的一个响应式数据中的某些属性，可获取oldVal
+    watch([() => person.name, () => person.age], (newVal, oldVal) => {
+      console.log('person的name或age更新了', newVal, oldVal);
+    })
+
+    // 特殊情况：
+    watch(() => person.job, (newVal, oldVal) => {
+      console.log('person的job.j1.salary更新了', newVal, oldVal);
+    }, { deep: true })  // 这里实际监听的是job，所以要开启deep
+    ```
+* 当对象以ref形式定义时，如何监听
+    ```
+    // 基本数据类型时不用加.value，因为person下value值是0，可以直接监听到，如果加.value，反而监听的是值
+    // ref下没有默认deep: true，.value下是对象，所以监听不到，可以直接监听.value，也可以加deep: true
+
+    // 1. 
+    watch(person.value, (newVal, oldVal) => {
+      console.log('person更新了', newVal, oldVal);
+    })
+    
+    // 2. 
+    watch(person, (newVal, oldVal) => {
+      console.log('person更新了', newVal, oldVal);
+    }, { deep: true })
     ```
