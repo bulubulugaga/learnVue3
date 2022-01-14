@@ -91,3 +91,28 @@
         * attrs: 值为对象，包含：组件外部传递过来，但没有在props配置中声明的属性，相当于this.$attrs。
         * slots：收到的插槽内容，相当于this.$slots。
         * emit: 分发自定义事件的函数，相当于this.$emit。
+# 7. 计算属性与监听
+1. computed函数
+* 与vue2中computed配置功能一致
+* 写法
+    ```
+    import { computed } from 'vue'
+
+    setup() {
+        // 简写
+        let fullName = computed(() => {
+            return person.firstName + '-' + person.lastName;
+        })
+        // 完整写法
+        let fullName = computed(() => {
+            get() {
+                return person.firstName + '-' + person.lastName;
+            }
+            set(value) {
+                const nameArr = value.split('-');
+                person.firstName = nameArr[0];
+                person.lastName = nameArr[1];
+            } 
+        })
+    }  
+    ```
