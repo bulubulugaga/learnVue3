@@ -168,9 +168,23 @@
     watch(person.value, (newVal, oldVal) => {
       console.log('person更新了', newVal, oldVal);
     })
-    
+
     // 2. 
     watch(person, (newVal, oldVal) => {
       console.log('person更新了', newVal, oldVal);
     }, { deep: true })
     ```
+## 3. watchEffect函数
+* watch的套路是：既要指明监听的属性，也要指明监听的回调。
+* watchEffect的套路是：不用指明监视那个属性，监视的回调中用到哪个属性，就监视哪个属性。
+* watchEffect有点像computed:
+    * computed注重计算出来的值（回调函数的返回值），所以必须要写返回值。
+    * watchEffect注重过程（回调函数的函数体），所以不用写返回值。
+    ```
+    // watchEffect所指定的回调中用到的数据只要发生变化，则直接重新执行回调。
+    watchEffect(() => {
+        const x1 = sum.value;
+        const x2 = person.age;
+        console.log('watchEffect配置的回调执行了');
+    })
+    ``` 
