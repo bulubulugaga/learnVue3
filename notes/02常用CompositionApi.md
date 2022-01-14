@@ -91,6 +91,7 @@
         * attrs: 值为对象，包含：组件外部传递过来，但没有在props配置中声明的属性，相当于this.$attrs。
         * slots：收到的插槽内容，相当于this.$slots。
         * emit: 分发自定义事件的函数，相当于this.$emit。
+
 # 7. 计算属性与监听
 ## 1. computed函数
 * 与vue2中computed配置功能一致
@@ -188,3 +189,20 @@
         console.log('watchEffect配置的回调执行了');
     })
     ``` 
+
+# 8. 生命周期
+## 1. 配置项形式
+* 与vue2基本一致，有两个更名
+    * beforeDestroy  =>  beforeUnmount
+    * destroyed  =>  unmounted
+* 组合式API
+    * beforeCreate  =>  setup
+    * created  =>  setup
+    * beforemount  =>  onBeforeMount
+    * mounted  =>  onMounted
+    * beforeUpdate  =>  onBeforeUpdate
+    * updated  =>  onUpdated
+    * beforeUmnount  =>  onBeforeUmnount
+    * unmounted  =>  onUnmounted
+* 当配置项和组合式一起使用时，组合项优先执行（一般不同时使用）
+    * setup -> beforeCreate -> created -> onBeforeMount -> beforemount ···   
