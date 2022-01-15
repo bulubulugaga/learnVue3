@@ -211,3 +211,25 @@
 * 什么是hook? --- 本质是一个函数，把setup函数中使用的Composition API进行了封装。
 * 类似于vue2中的mixin。
 * 自定义hook的优势：复用代码，让setup中的逻辑更清楚易懂。
+
+# 10. toRef
+* 作用：创建一个ref对象，其value值指向另一个对象中的某个属性。
+* 语法：const name = roRef(person, 'name')
+* 应用：要将响应式对象中的某个属性单独提供给外部使用。
+* 扩展：toRefs与toRef功能一致，但可以批量创建多个ref对象，语法：toRefs(person)
+```
+return {
+    name: person.name,   
+    // 相当于name: '张三'，失去响应
+
+    name: ref(person.name),   
+    // RefImpl{ ..., value, [[prototype{get,set}]] } ref会导致现在name响应式绑定的是'张三'， 页面响应， person值不会被修改
+
+    name: toRef(person, 'name'),
+    salary: toRef(person.job.j1, 'salary')
+    // ObjectRefImpl{ ..., value, [[prototype{get,set}]] }  响应式对象 person值也会被修改
+
+    ...toRefs(person)     
+    // { name: ObjectRefImpl{ ..., value, [[prototype{get,set}]]}, ··· }   深层嵌套也响应
+}
+```
