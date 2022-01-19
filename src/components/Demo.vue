@@ -1,6 +1,5 @@
 <template>
   <h2>一个人的信息是：</h2>
-  <h2>所有信息：{{ person }}</h2>
   <h2>姓名：{{ name }}</h2>
   <h2>年龄：{{ age }}</h2>
   <h2>薪资：{{ job.j1.salary }}</h2>
@@ -11,17 +10,16 @@
 
   <hr />
 
-  <h2>x.y的值：{{ x.y }}</h2>
-  <button @click="x.y++">x + 1</button>
+  <h2>sum的值：{{ sum }}</h2>
+  <button @click="sum++">sum++</button>
 </template>
 
 <script>
-import { ref, reactive, toRefs, shallowReactive, shallowRef } from 'vue'
+import { ref, reactive, toRefs, readonly, shallowReadonly } from 'vue'
 export default {
   name: 'Demo',
   setup() {
-    // let person = reactive({
-    let person = shallowReactive({   // name和age完全响应，job改变不响应，但在改变name和age是会变成最后的值
+    let person = reactive({
       name: '张三',
       age: 18,
       job: {
@@ -30,20 +28,15 @@ export default {
         }
       }
     })
-    console.log(person);
+    let sum = ref(0);
 
-    // let x = shallowRef(0);   // 绑定基本数据类型时与ref一致
-    // console.log(x);
-    
-    // let x = ref({  // RefImpl{...value:Proxy}
-    let x = shallowRef({  // RefImpl{...value:{y:0}}
-      y: 0
-    });
-    console.log(x);
+    sum = readonly(sum);
+    // sum = shallowReadonly(sum);   // 因为里面就是基本数据类型，所以跟readonly效果一样
+    // person = readonly(person);
+    person = shallowReadonly(person);   // 可修改salary
 
     return {
-      person, 
-      x, 
+      sum, 
       ...toRefs(person) 
     }
   }
