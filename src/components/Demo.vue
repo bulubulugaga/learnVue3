@@ -8,14 +8,20 @@
   <button @click="name+='~'">修改姓名</button><br />
   <button @click="age+=1">修改年龄</button><br />
   <button @click="job.j1.salary+=1">修改薪资</button>
+
+  <hr />
+
+  <h2>x.y的值：{{ x.y }}</h2>
+  <button @click="x.y++">x + 1</button>
 </template>
 
 <script>
-import { reactive, toRef, ref, toRefs } from 'vue'
+import { ref, reactive, toRefs, shallowReactive, shallowRef } from 'vue'
 export default {
   name: 'Demo',
   setup() {
-    let person = reactive({
+    // let person = reactive({
+    let person = shallowReactive({   // name和age完全响应，job改变不响应，但在改变name和age是会变成最后的值
       name: '张三',
       age: 18,
       job: {
@@ -24,30 +30,21 @@ export default {
         }
       }
     })
+    console.log(person);
 
-    console.log(ref(person.name));  // RefImpl{ ..., value, [[prototype{get,set}]] }   只是单纯的对 '张三' 响应式
-    console.log(toRef(person, 'name'));  // ObjectRefImpl{ ..., value, [[prototype{get,set}]] }  响应式对象
-    console.log(toRefs(person));  // { name: ObjectRefImpl{ ..., value, [[prototype{get,set}]]}, ··· }   深层嵌套也响应
+    // let x = shallowRef(0);   // 绑定基本数据类型时与ref一致
+    // console.log(x);
+    
+    // let x = ref({  // RefImpl{...value:Proxy}
+    let x = shallowRef({  // RefImpl{...value:{y:0}}
+      y: 0
+    });
+    console.log(x);
 
     return {
-      person,  
-
-
-      // name: person.name,   // 相当于name: '张三'，失去响应
-      // age: person.age,
-      // salary: person.job.j1.salary
-      // 相当于...person
-
-      // name: toRef(person, 'name'),   // ObjectRefImpl{ ..., value, [[prototype{get,set}]] }  响应式对象
-      // age: toRef(person, 'age'),
-      // salary: toRef(person.job.j1, 'salary')
-
-      // name: ref(person.name),   // RefImpl{ ..., value, [[prototype{get,set}]] } ref会导致现在name响应式绑定的是'张三', person值不会被修改
-      // age: ref(person.age),
-      // salary: ref(person.job.j1.salary)
-
-      ...toRefs(person)   // { name: ObjectRefImpl{ ..., value, [[prototype{get,set}]]}, ··· }   深层嵌套也响应
-      // toRefs返回的是对象，所以展开返回  
+      person, 
+      x, 
+      ...toRefs(person) 
     }
   }
 }
