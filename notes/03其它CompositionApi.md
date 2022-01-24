@@ -22,33 +22,55 @@
     1. 有些值不应被设置为响应式的，例如复杂的第三方类库等。
     2. 当渲染具有不可变数据源的大列表时，跳过响应式转化可以提高性能。
 
-# customRef
+# 4. customRef
 * 作用：创建一个自定义的ref，并对其依赖项跟踪和更新触发进行显示控制。
 * 实现防抖效果：
-```
-<input type="text" v-model="keyword" />
-<h2>{{ keyword }}</h2>
+  ```
+  <input type="text" v-model="keyword" />
+  <h2>{{ keyword }}</h2>
 
-// 自定义ref
-function myRef(value, delay) {
-  let timer;
-  return customRef((track, trigger) => ({
-    get() {
-      console.log(`有人从myRef这个容器中读取数据了，我把${value}值给他了`);
-      track();   // 通知vue追踪value值的变化
-      return value;
-    },
-    set(newVal) {
-      console.log(`有人把myRef这个容器中属性改为了：${newVal}`);
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        value = newVal;
-        trigger();   // 通知vue重新解析模板
-      }, delay);
+  // 自定义ref
+  function myRef(value, delay) {
+    let timer;
+    return customRef((track, trigger) => ({
+      get() {
+        console.log(`有人从myRef这个容器中读取数据了，我把${value}值给他了`);
+        track();   // 通知vue追踪value值的变化
+        return value;
+      },
+      set(newVal) {
+        console.log(`有人把myRef这个容器中属性改为了：${newVal}`);
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          value = newVal;
+          trigger();   // 通知vue重新解析模板
+        }, delay);
+      }
+    }))
+  }
+
+  // let keyword = ref('hello');   // 使用vue提供的ref
+  let keyword = myRef('hello', 500);   // 自定义ref
+  ```
+
+# 5. provide与inject
+* 作用：实现祖与后代组件间通信
+* 套路：父组件有一个provide选项来提供数据，后代组件有一个inject选项来开始使用这些数据
+* 具体写法：  
+  1. 祖组件中：
+    ```
+    setup() {
+      ……
+      let car = reactive({ name: '奔驰', price: '40万' });
+      provide('car', car);
+      ……
     }
-  }))
-}
-
-// let keyword = ref('hello');   // 使用vue提供的ref
-let keyword = myRef('hello', 500);   // 自定义ref
-```
+    ```
+  2. 后代组件中：
+    ```
+    setup() {
+      ……
+      const car = inject('car');
+      return { car }
+    }
+    ```

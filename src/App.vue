@@ -1,40 +1,33 @@
 <template>
-  <input type="text" v-model="keyword" />
-  <h2>{{ keyword }}</h2>
+  <div class="app">
+    <h3>我是App组件（祖组件），{{ name }} ---- {{ price }}</h3>
+    <Child />
+  </div>
 </template>
 
 <script>
-import { ref, customRef } from 'vue'
+import Child from './components/Child.vue'
+import { reactive, toRefs, provide } from 'vue'
 export default {
   name: 'App',
+  components: { Child },
   setup() {
-    // 自定义ref
-    function myRef(value, delay) {
-      let timer;
-      return customRef((track, trigger) => ({
-        get() {
-          console.log(`有人从myRef这个容器中读取数据了，我把${value}值给他了`);
-          track();   // 通知vue追踪value值的变化
-          return value;
-        },
-        set(newVal) {
-          console.log(`有人把myRef这个容器中属性改为了：${newVal}`);
-          clearTimeout(timer);
-          timer = setTimeout(() => {
-            value = newVal;
-            trigger();   // 通知vue重新解析模板
-          }, delay);
-        }
-      }))
-    }
-
-    // let keyword = ref('hello');   // 使用vue提供的ref
-    let keyword = myRef('hello', 500);   // 自定义ref
-
+    let car = reactive({
+      name: '宝马',
+      price: '40万'
+    })
+    
+    provide('car', car)  // 给自己的后代组件传递数据（所有后代都能接收 ）
 
     return {
-      keyword
+      ...toRefs(car)
     }
   }
 }
 </script>
+<style>
+.app {
+  background: gray;
+  padding: 10px;
+}
+</style>
