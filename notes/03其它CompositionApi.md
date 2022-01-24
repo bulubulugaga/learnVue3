@@ -21,3 +21,34 @@
   * 应用场景：
     1. 有些值不应被设置为响应式的，例如复杂的第三方类库等。
     2. 当渲染具有不可变数据源的大列表时，跳过响应式转化可以提高性能。
+
+# customRef
+* 作用：创建一个自定义的ref，并对其依赖项跟踪和更新触发进行显示控制。
+* 实现防抖效果：
+```
+<input type="text" v-model="keyword" />
+<h2>{{ keyword }}</h2>
+
+// 自定义ref
+function myRef(value, delay) {
+  let timer;
+  return customRef((track, trigger) => ({
+    get() {
+      console.log(`有人从myRef这个容器中读取数据了，我把${value}值给他了`);
+      track();   // 通知vue追踪value值的变化
+      return value;
+    },
+    set(newVal) {
+      console.log(`有人把myRef这个容器中属性改为了：${newVal}`);
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        value = newVal;
+        trigger();   // 通知vue重新解析模板
+      }, delay);
+    }
+  }))
+}
+
+// let keyword = ref('hello');   // 使用vue提供的ref
+let keyword = myRef('hello', 500);   // 自定义ref
+```
