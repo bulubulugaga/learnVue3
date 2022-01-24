@@ -1,24 +1,24 @@
 <template>
   <div class="app">
-    <h3>我是App组件（祖组件），{{ name }} ---- {{ price }}</h3>
-    <Child />
+    <h3>我是App组件</h3>
   </div>
 </template>
 
 <script>
-import Child from './components/Child.vue'
-import { reactive, toRefs, provide } from 'vue'
+import { reactive, readonly, toRefs, ref, isRef, isReactive, isReadonly, isProxy } from 'vue'
 export default {
   name: 'App',
-  components: { Child },
   setup() {
-    let car = reactive({
-      name: '宝马',
-      price: '40万'
-    })
-    
-    provide('car', car)  // 给自己的后代组件传递数据（所有后代都能接收 ）
+    let car = reactive({ name: '宝马', price: '40万' });
+    let sum = ref(0);
+    let car2 = readonly(car);
 
+    console.log(isRef(sum));
+    console.log(isReactive(car));
+    console.log(isReadonly(car2));
+    console.log(isProxy(car));
+    console.log(isProxy(car2));
+    
     return {
       ...toRefs(car)
     }
