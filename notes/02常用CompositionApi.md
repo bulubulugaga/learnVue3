@@ -12,7 +12,7 @@
         * vue2.x配置（data、methods、computed……）中可以访问到setuo中的属性和方法。
         * 但在setup中不能访问vue2.x配置。
         * 如果重名，看顺序，data在前以data为主，setup在前以setup为主。
-    2. setup不能是一个async函数，因为返回值不再是return的对象，而是promise，模板中看不到return对象中的属性。
+    2. setup不能是一个async函数，因为返回值不再是return的对象，而是promise，模板中看不到return对象中的属性。(后期也可以返回一个Promise实例，但需要Suspense和异步组件的配合)
 
 # 2. ref函数
 1. 作用：定义一个响应式数据。
